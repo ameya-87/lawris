@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.prose-legal h1 { @apply text-lg font-semibold mt-4 mb-2; }
+.prose-legal h2 { @apply text-base font-semibold mt-3 mb-1.5; }
+.prose-legal p { @apply my-2 leading-relaxed; }
+.prose-legal ol { @apply list-decimal pl-6 my-2 space-y-1; }
+.prose-legal ul { @apply list-disc pl-6 my-2 space-y-1; }
+.prose-legal strong { @apply font-semibold; }
+.prose-legal em { @apply italic; }
+.prose-legal hr { @apply my-4 border-stone-200; }
+
+.tiptap.ProseMirror { @apply outline-none min-h-[40rem]; }
+.tiptap.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #a8a29e;
+  pointer-events: none;
+  height: 0;
+}
