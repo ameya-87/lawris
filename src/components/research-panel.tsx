@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import type { ResearchNote } from "@/lib/types";
-import type { ResearchResponse } from "@/lib/prompts/research";
-import { Send, Loader2, BookOpen, Sparkles } from "lucide-react";
+import type { CaseDocumentRef, CitationItem, ResearchResponse } from "@/lib/prompts/research";
+import { getSourceHost } from "@/lib/source-urls";
+import { Send, Loader2, BookOpen, Sparkles, ExternalLink } from "lucide-react";
 
 type Turn = { query: string; response: ResearchResponse | null; loading: boolean };
 
@@ -107,17 +108,17 @@ function Turn({ turn }: { turn: Turn }) {
           {turn.response.citations.length > 0 && (
             <div className="space-y-1.5">
               <div className="text-xs uppercase tracking-wide text-stone-500 flex items-center gap-1.5">
-                <BookOpen className="h-3 w-3" /> Cited cases
+                <BookOpen className="h-3 w-3" /> Citations
               </div>
-              <ul className="space-y-1">
+              <div>
                 {turn.response.citations.map((c, i) => (
-                  <li key={i} className="text-xs">
-                    <span className="font-medium italic">{c.title}</span>
-                    <span className="text-stone-500"> — {c.citation}</span>
-                    <div className="text-stone-700 mt-0.5">{c.principle}</div>
-                  </li>
+                  <CitationCard
+                    key={i}
+                    c={c}
+                    caseDocuments={turn.response?.case_documents ?? []}
+                  />
                 ))}
-              </ul>
+              </div>
             </div>
           )}
           {turn.response.statutes.length > 0 && (
@@ -151,6 +152,89 @@ function Turn({ turn }: { turn: Turn }) {
           )}
         </>
       )}
+    </div>
+  );
+}
+
+function resolveCitationUrl(
+  c: CitationItem,
+  caseDocuments: CaseDocumentRef[],
+): string | null {
+  if (c.source_type === "law") return c.source_url ?? null;
+  if (c.source_type !== "doc") return null;
+  // DOC: match citation against case_documents by fuzzy name containment.
+  const haystack = `${c.source ?? ""} ${c.case_name_or_statute ?? ""}`.toLowerCase();
+  for (const doc of caseDocuments) {
+    if (!doc.url) continue;
+    const docName = doc.name.toLowerCase();
+    if (haystack.includes(docName) || (c.case_name_or_statute ?? "").toLowerCase().includes(docName)) {
+      return doc.url;
+    }
+  }
+  return null;
+}
+
+function CitationCard({
+  c,
+  caseDocuments,
+}: {
+  c: CitationItem;
+  caseDocuments: CaseDocumentRef[];
+}) {
+  // Backwards compat: legacy responses lack core_holding — render plain one-liner.
+  if (!c.core_holding) {
+    const legacy = [c.title, c.citation, c.principle].filter(Boolean).join(" — ");
+    const plain = c.source ?? legacy;
+    if (!plain) return null;
+    return <div className="text-xs text-stone-600 mb-2">{plain}</div>;
+  }
+  const isLaw = c.source_type === "law";
+  const badgeClass = isLaw
+    ? "bg-blue-100 text-blue-800"
+    : "bg-amber-100 text-amber-800";
+  const title = c.case_name_or_statute ?? c.source ?? "Citation";
+  const url = resolveCitationUrl(c, caseDocuments);
+  return (
+    <div className="bg-white border border-stone-200 rounded-lg p-4 mb-3">
+      <div className="flex items-center gap-2 mb-3">
+        <span
+          className={`text-[10px] font-semibold tracking-wide px-2 py-0.5 rounded-full ${badgeClass}`}
+        >
+          {isLaw ? "LAW" : "DOC"}
+        </span>
+        {url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={`Click to open original on ${getSourceHost(url)}`}
+            className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
+          >
+            {title}
+            <ExternalLink className="h-3 w-3" />
+          </a>
+        ) : (
+          <span className="text-sm font-semibold text-stone-900">{title}</span>
+        )}
+      </div>
+      <div className="space-y-2.5">
+        <CitationField label="Core Holding" value={c.core_holding} />
+        <CitationField label="Key Facts" value={c.key_facts} />
+        <CitationField label="Why This Matters Here" value={c.relevance_to_query} />
+      </div>
+    </div>
+  );
+}
+
+function CitationField({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <div className="text-[10px] uppercase tracking-wide text-stone-500 font-medium">
+        {label}
+      </div>
+      <div className="text-xs text-stone-800 leading-relaxed mt-0.5">
+        {value ?? "Not specified in retrieved context"}
+      </div>
     </div>
   );
 }

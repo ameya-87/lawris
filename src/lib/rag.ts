@@ -85,3 +85,98 @@ export async function retrieveChunks(
 
   return (data as ChunkMatch[]) ?? [];
 }
+
+export interface CorpusMatch {
+  content: string;
+  source_name: string;
+  section_reference: string | null;
+  category: string | null;
+  source_type: string;
+  similarity: number;
+}
+
+export async function retrieveCorpusChunks(
+  query: string,
+  topK = 3,
+  category?: string,
+): Promise<CorpusMatch[]> {
+  const queryEmbedding = await embedText(query);
+  const supabase = supabaseServer();
+  const { data, error } = await supabase.rpc("match_corpus", {
+    query_embedding: JSON.stringify(queryEmbedding),
+    match_count: topK,
+    filter_category: category ?? null,
+  });
+  if (error) {
+    console.error("Corpus search error:", error);
+    return [];
+  }
+  return (data as CorpusMatch[]) ?? [];
+}
+
+export async function retrieveCorpusChunksHybrid(
+  query: string,
+  topK = 6,
+): Promise<CorpusMatch[]> {
+  const supabase = supabaseServer();
+
+  // Step 1: Extract section numbers from query (e.g. "187", "187(3)", "483", "Article 21").
+  const sectionMatches = query.match(/\b(?:section\s+)?(\d{1,4}(?:\(\d+\))?)\b/gi) ?? [];
+  const cleanSections = sectionMatches
+    .map((s) => s.replace(/^section\s+/i, "").trim())
+    .filter((s) => /^\d{1,4}/.test(s));
+
+  // Step 2: Keyword search for section numbers in statute chunks.
+  const keywordResults: CorpusMatch[] = [];
+  for (const section of cleanSections.slice(0, 3)) {
+    const patterns = [
+      `% ${section}.%`,
+      `% ${section} %`,
+      `%Section ${section}%`,
+    ];
+    for (const pattern of patterns) {
+      const { data } = await supabase.rpc("match_corpus_keyword", {
+        keyword_pattern: pattern,
+        match_count: 2,
+      });
+      if (data) keywordResults.push(...(data as CorpusMatch[]));
+    }
+  }
+
+  const seen = new Set<string>();
+  const uniqueKeyword = keywordResults
+    .filter((r) => {
+      const key = r.content.substring(0, 100);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 3);
+
+  // Step 3: Stratified semantic search (top statutes + top judgments).
+  const queryEmbedding = await embedText(query);
+  const { data: stratifiedData, error } = await supabase.rpc("match_corpus_stratified", {
+    query_embedding: JSON.stringify(queryEmbedding),
+    per_type_count: 3,
+  });
+
+  if (error) {
+    console.error("Stratified corpus search error:", error);
+    return uniqueKeyword;
+  }
+
+  const semanticResults = (stratifiedData as CorpusMatch[]) ?? [];
+
+  // Step 4: Merge — keyword hits on top, then semantic hits, deduped by content signature.
+  const merged = [...uniqueKeyword];
+  const mergedSigs = new Set(uniqueKeyword.map((r) => r.content.substring(0, 100)));
+  for (const r of semanticResults) {
+    const sig = r.content.substring(0, 100);
+    if (!mergedSigs.has(sig)) {
+      merged.push(r);
+      mergedSigs.add(sig);
+    }
+  }
+
+  return merged.slice(0, topK);
+}
