@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Calendar, FolderOpen, Home } from "lucide-react";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { UserMenu } from "@/components/user-menu";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { getSessionUser } from "@/lib/auth/session";
 
 export default async function AppLayout({
@@ -21,7 +22,8 @@ export default async function AppLayout({
             <NavLink href="/cases" icon={<FolderOpen className="h-3.5 w-3.5" />}>Cases</NavLink>
             <NavLink href="/calendar" icon={<Calendar className="h-3.5 w-3.5" />}>Calendar</NavLink>
           </nav>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-1.5">
+            {user && <NotificationBell />}
             <UserMenu
               user={
                 user
