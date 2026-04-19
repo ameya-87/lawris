@@ -165,21 +165,23 @@ export function CalendarView({
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Calendar</h1>
-          <p className="text-sm text-stone-600 mt-0.5">
+          <h1 className="text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+            Calendar
+          </h1>
+          <p className="text-sm text-stone-600 dark:text-stone-400 mt-0.5">
             {totals.total} open deadlines · {totals.synced} synced to Google Calendar
           </p>
         </div>
         <div className="flex items-center gap-2">
           {connected ? (
-            <span className="inline-flex items-center gap-1.5 text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-md px-2.5 py-1.5">
+            <span className="inline-flex items-center gap-1.5 text-xs text-emerald-800 dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-900/60 rounded-md px-2.5 py-1.5">
               <CheckCircle2 className="h-3.5 w-3.5" />
               Google Calendar connected
             </span>
           ) : (
             <button
               onClick={handleConnect}
-              className="inline-flex items-center gap-2 text-sm font-medium text-stone-700 border border-stone-300 hover:border-indigo-300 hover:text-indigo-700 bg-white rounded-md px-3 py-1.5 transition"
+              className="inline-flex items-center gap-2 text-sm font-medium text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 hover:border-indigo-300 dark:hover:border-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 bg-surface rounded-md px-3 py-1.5 transition"
             >
               <Link2 className="h-3.5 w-3.5" />
               Connect Google Calendar
@@ -188,7 +190,7 @@ export function CalendarView({
           <button
             onClick={syncAll}
             disabled={bulkRunning || totals.total === 0}
-            className="inline-flex items-center gap-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed rounded-md px-3 py-1.5 transition"
+            className="inline-flex items-center gap-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400 disabled:opacity-60 disabled:cursor-not-allowed rounded-md px-3 py-1.5 transition shadow-soft"
           >
             <Calendar className="h-3.5 w-3.5" />
             {bulkRunning ? "Syncing…" : "Sync all to Google"}
@@ -200,18 +202,18 @@ export function CalendarView({
         grouped[bucket].length === 0 ? null : (
           <section key={bucket}>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xs uppercase tracking-wide text-stone-500">
+              <h2 className="text-xs uppercase tracking-wider text-stone-500 dark:text-stone-400 font-medium">
                 {bucket} ({grouped[bucket].length})
               </h2>
             </div>
-            <ul className="bg-white border border-stone-200 rounded-lg overflow-hidden divide-y divide-stone-100 shadow-sm">
+            <ul className="bg-surface border border-stone-200 dark:border-stone-800 rounded-xl overflow-hidden divide-y divide-stone-100 dark:divide-stone-800 shadow-soft">
               {grouped[bucket].map((d) => {
                 const days = daysUntil(d.due_date);
                 const syncInfo = syncMap[d.id] ?? { status: "idle" as SyncState, event_link: null };
                 return (
                   <li
                     key={d.id}
-                    className="p-4 flex items-start gap-4 hover:bg-stone-50/60 transition"
+                    className="p-4 flex items-start gap-4 hover:bg-stone-50/60 dark:hover:bg-stone-800/40 transition"
                   >
                     <div
                       className={`px-2.5 py-1 rounded text-xs font-medium border ${urgencyClass(bucket)} whitespace-nowrap`}
@@ -219,27 +221,29 @@ export function CalendarView({
                       {days === 0 ? "Today" : days < 0 ? `${Math.abs(days)}d ago` : `in ${days}d`}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm">{d.title}</div>
+                      <div className="font-medium text-sm text-stone-900 dark:text-stone-50">
+                        {d.title}
+                      </div>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <Link
                           href={`/cases/${d.case_id}`}
-                          className="text-xs text-indigo-700 hover:underline"
+                          className="text-xs text-indigo-700 dark:text-indigo-300 hover:underline"
                         >
                           {d.case_title}
                         </Link>
-                        <span className="text-stone-300 text-xs">·</span>
-                        <span className="text-[11px] uppercase tracking-wide text-stone-500">
+                        <span className="text-stone-300 dark:text-stone-600 text-xs">·</span>
+                        <span className="text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">
                           {d.deadline_type}
                         </span>
                       </div>
                       {d.notes && (
-                        <p className="text-xs text-stone-600 mt-1.5 leading-relaxed">
+                        <p className="text-xs text-stone-600 dark:text-stone-400 mt-1.5 leading-relaxed">
                           {d.notes}
                         </p>
                       )}
                     </div>
                     <div className="flex flex-col items-end gap-1.5 whitespace-nowrap">
-                      <div className="text-xs text-stone-500">{d.due_date}</div>
+                      <div className="text-xs text-stone-500 dark:text-stone-400">{d.due_date}</div>
                       <SyncButton
                         deadlineId={d.id}
                         initial={syncInfo.status}
@@ -257,12 +261,12 @@ export function CalendarView({
       )}
 
       {items.length === 0 && (
-        <div className="bg-white border border-dashed border-stone-300 rounded-lg p-12 text-center">
-          <div className="mx-auto h-10 w-10 rounded-full bg-stone-50 border border-stone-200 flex items-center justify-center mb-3">
-            <CircleX className="h-4 w-4 text-stone-400" />
+        <div className="bg-surface border border-dashed border-stone-300 dark:border-stone-700 rounded-xl p-12 text-center">
+          <div className="mx-auto h-10 w-10 rounded-full bg-surface-muted border border-stone-200 dark:border-stone-700 flex items-center justify-center mb-3">
+            <CircleX className="h-4 w-4 text-stone-400 dark:text-stone-500" />
           </div>
-          <div className="text-sm font-medium text-stone-800">No open deadlines</div>
-          <p className="text-xs text-stone-500 mt-1">
+          <div className="text-sm font-medium text-stone-800 dark:text-stone-200">No open deadlines</div>
+          <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
             Deadlines will appear here as they&rsquo;re added to your cases.
           </p>
         </div>

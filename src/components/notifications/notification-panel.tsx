@@ -51,13 +51,13 @@ export function NotificationPanel({
   const unreadCount = (items ?? []).filter((n) => n.status === "unread").length;
 
   return (
-    <div className="absolute right-0 mt-2 w-96 max-h-[calc(100vh-6rem)] bg-white border border-stone-200 rounded-lg shadow-xl overflow-hidden z-50 flex flex-col">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-stone-100">
+    <div className="absolute right-0 mt-2 w-96 max-h-[calc(100vh-6rem)] bg-surface border border-stone-200 dark:border-stone-800 rounded-xl shadow-lift overflow-hidden z-50 flex flex-col animate-fade-in">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-stone-100 dark:border-stone-800">
         <div className="flex items-center gap-2">
-          <Bell className="h-4 w-4 text-stone-700" />
-          <span className="text-sm font-semibold text-stone-900">Notifications</span>
+          <Bell className="h-4 w-4 text-stone-700 dark:text-stone-300" />
+          <span className="text-sm font-semibold text-stone-900 dark:text-stone-50">Notifications</span>
           {unreadCount > 0 && (
-            <span className="text-[11px] font-semibold text-white bg-indigo-600 px-1.5 py-0.5 rounded-full tabular-nums">
+            <span className="text-[11px] font-semibold text-white bg-indigo-600 dark:bg-indigo-500 px-1.5 py-0.5 rounded-full tabular-nums">
               {unreadCount}
             </span>
           )}
@@ -66,7 +66,7 @@ export function NotificationPanel({
           {unreadCount > 0 && (
             <button
               onClick={onMarkAllRead}
-              className="text-xs text-stone-500 hover:text-indigo-700 flex items-center gap-1 px-2 py-1 rounded hover:bg-stone-50"
+              className="text-xs text-stone-500 dark:text-stone-400 hover:text-indigo-700 dark:hover:text-indigo-300 flex items-center gap-1 px-2 py-1 rounded hover:bg-stone-50 dark:hover:bg-stone-800"
               title="Mark all as read"
             >
               <CheckCheck className="h-3.5 w-3.5" />
@@ -78,22 +78,22 @@ export function NotificationPanel({
 
       <div className="overflow-y-auto flex-1 min-h-0">
         {loading ? (
-          <div className="py-16 flex flex-col items-center justify-center text-stone-400">
+          <div className="py-16 flex flex-col items-center justify-center text-stone-400 dark:text-stone-500">
             <Loader2 className="h-5 w-5 animate-spin mb-2" />
             <span className="text-xs">Loading reminders…</span>
           </div>
         ) : (items?.length ?? 0) === 0 ? (
           <div className="py-14 px-6 text-center">
-            <div className="mx-auto h-10 w-10 rounded-full bg-stone-50 border border-stone-200 flex items-center justify-center mb-3">
-              <Bell className="h-4 w-4 text-stone-400" />
+            <div className="mx-auto h-10 w-10 rounded-full bg-surface-muted border border-stone-200 dark:border-stone-700 flex items-center justify-center mb-3">
+              <Bell className="h-4 w-4 text-stone-400 dark:text-stone-500" />
             </div>
-            <div className="text-sm font-medium text-stone-800">You&rsquo;re all caught up</div>
-            <p className="text-xs text-stone-500 mt-1">
+            <div className="text-sm font-medium text-stone-800 dark:text-stone-200">You&rsquo;re all caught up</div>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
               New hearings and deadlines will appear here as reminders.
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-stone-100">
+          <ul className="divide-y divide-stone-100 dark:divide-stone-800">
             {items!.map((n) => {
               const style = URGENCY_STYLES[n.urgency];
               const isUnread = n.status === "unread";
@@ -189,11 +189,11 @@ export function NotificationPanel({
         )}
       </div>
 
-      <div className="border-t border-stone-100 px-4 py-2 bg-stone-50/60">
+      <div className="border-t border-stone-100 dark:border-stone-800 px-4 py-2 bg-stone-50/60 dark:bg-stone-900/40">
         <Link
           href="/calendar"
           onClick={onClose}
-          className="text-xs text-indigo-700 hover:text-indigo-900 font-medium"
+          className="text-xs text-indigo-700 dark:text-indigo-300 hover:text-indigo-900 dark:hover:text-indigo-200 font-medium"
         >
           Open calendar
         </Link>

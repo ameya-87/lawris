@@ -84,8 +84,8 @@ function ClauseMark({
           setPinned((v) => !v);
           setOpen(true);
         }}
-        className={`inline underline decoration-dotted decoration-indigo-400 underline-offset-4 hover:decoration-solid hover:text-indigo-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 rounded px-0.5 transition-colors cursor-help ${
-          pinned ? "text-indigo-800 bg-indigo-50/60" : ""
+        className={`inline underline decoration-dotted decoration-indigo-400 dark:decoration-indigo-500 underline-offset-4 hover:decoration-solid hover:text-indigo-800 dark:hover:text-indigo-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 rounded px-0.5 transition-colors cursor-help ${
+          pinned ? "text-indigo-800 dark:text-indigo-300 bg-indigo-50/60 dark:bg-indigo-950/40" : ""
         }`}
         aria-expanded={visible}
         aria-label={`Clause: ${(clause as ClauseDef).name}`}
@@ -98,10 +98,22 @@ function ClauseMark({
 }
 
 const RISK_STYLES: Record<ClauseRisk, { label: string; chip: string }> = {
-  high: { label: "High risk", chip: "bg-red-50 text-red-800 border-red-200" },
-  medium: { label: "Medium", chip: "bg-amber-50 text-amber-800 border-amber-200" },
-  low: { label: "Low", chip: "bg-yellow-50 text-yellow-800 border-yellow-200" },
-  info: { label: "Info", chip: "bg-stone-50 text-stone-700 border-stone-200" },
+  high: {
+    label: "High risk",
+    chip: "bg-red-50 text-red-800 border-red-200 dark:bg-red-950/60 dark:text-red-200 dark:border-red-900/80",
+  },
+  medium: {
+    label: "Medium",
+    chip: "bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/60 dark:text-amber-200 dark:border-amber-900/80",
+  },
+  low: {
+    label: "Low",
+    chip: "bg-yellow-50 text-yellow-800 border-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-200 dark:border-yellow-800/60",
+  },
+  info: {
+    label: "Info",
+    chip: "bg-stone-50 text-stone-700 border-stone-200 dark:bg-stone-800/60 dark:text-stone-300 dark:border-stone-700",
+  },
 };
 
 function ClausePopover({ clause, onClose }: { clause: ClauseDef; onClose: () => void }) {
@@ -109,22 +121,22 @@ function ClausePopover({ clause, onClose }: { clause: ClauseDef; onClose: () => 
   return (
     <span
       role="tooltip"
-      className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-40 w-72 max-w-[80vw] bg-white border border-stone-200 rounded-lg shadow-lg p-3.5 text-left animate-in fade-in"
+      className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-40 w-72 max-w-[80vw] bg-surface border border-stone-200 dark:border-stone-800 rounded-xl shadow-lift p-3.5 text-left animate-fade-in"
       onClick={(e) => e.stopPropagation()}
     >
       <span className="flex items-start gap-2.5">
-        <span className="flex-shrink-0 mt-0.5 h-7 w-7 rounded-md bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700">
+        <span className="flex-shrink-0 mt-0.5 h-7 w-7 rounded-md bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300">
           <BookOpen className="h-3.5 w-3.5" />
         </span>
         <span className="flex-1 min-w-0 block">
           <span className="flex items-start justify-between gap-2">
             <span className="block">
-              <span className="block text-sm font-semibold text-stone-900 leading-snug">
+              <span className="block text-sm font-semibold text-stone-900 dark:text-stone-50 leading-snug">
                 {clause.name}
               </span>
               <span className="mt-0.5 flex items-center gap-1.5 text-[11px]">
-                <span className="text-stone-500 uppercase tracking-wide">{clause.category}</span>
-                <span className="text-stone-300">·</span>
+                <span className="text-stone-500 dark:text-stone-400 uppercase tracking-wider">{clause.category}</span>
+                <span className="text-stone-300 dark:text-stone-600">·</span>
                 <span className={`inline-flex items-center rounded-full border px-1.5 py-0.5 font-medium ${risk.chip}`}>
                   {risk.label}
                 </span>
@@ -133,18 +145,18 @@ function ClausePopover({ clause, onClose }: { clause: ClauseDef; onClose: () => 
             <button
               type="button"
               onClick={onClose}
-              className="p-0.5 rounded text-stone-300 hover:text-stone-600 hover:bg-stone-100 transition flex-shrink-0"
+              className="p-0.5 rounded text-stone-300 dark:text-stone-600 hover:text-stone-600 dark:hover:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition flex-shrink-0"
               aria-label="Close"
             >
               <X className="h-3 w-3" />
             </button>
           </span>
-          <span className="block mt-2 text-xs leading-relaxed text-stone-700">
+          <span className="block mt-2 text-xs leading-relaxed text-stone-700 dark:text-stone-300">
             {clause.summary}
           </span>
           {clause.source && (
-            <span className="block mt-2 text-[11px] text-stone-500">
-              Source: <span className="text-stone-700">{clause.source}</span>
+            <span className="block mt-2 text-[11px] text-stone-500 dark:text-stone-400">
+              Source: <span className="text-stone-700 dark:text-stone-300">{clause.source}</span>
             </span>
           )}
         </span>

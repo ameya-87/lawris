@@ -60,23 +60,25 @@ export function UserMenu({ user }: Props) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 py-1 pl-1 pr-2 rounded-md hover:bg-stone-100 transition"
+        className="flex items-center gap-2 py-1 pl-1 pr-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-800 transition"
         aria-expanded={open}
       >
-        <span className="h-7 w-7 rounded-full bg-gradient-to-br from-indigo-600 to-indigo-800 text-white text-xs font-semibold flex items-center justify-center">
+        <span className="h-7 w-7 rounded-full bg-gradient-to-br from-indigo-600 to-indigo-800 dark:from-indigo-500 dark:to-indigo-700 text-white text-xs font-semibold flex items-center justify-center">
           {initials}
         </span>
-        <span className="text-sm font-medium text-stone-900 hidden sm:inline">{user.name}</span>
-        <ChevronDown className="h-3.5 w-3.5 text-stone-500" />
+        <span className="text-sm font-medium text-stone-900 dark:text-stone-100 hidden sm:inline">
+          {user.name}
+        </span>
+        <ChevronDown className="h-3.5 w-3.5 text-stone-500 dark:text-stone-400" />
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-64 bg-white border border-stone-200 rounded-lg shadow-lg overflow-hidden z-50">
-          <div className="px-4 py-3 border-b border-stone-100">
-            <div className="text-sm font-medium text-stone-900 truncate">{user.name}</div>
-            <div className="text-xs text-stone-500 truncate">{user.email}</div>
+        <div className="absolute right-0 mt-2 w-64 bg-surface border border-stone-200 dark:border-stone-800 rounded-xl shadow-lift overflow-hidden z-50 animate-fade-in">
+          <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-800">
+            <div className="text-sm font-medium text-stone-900 dark:text-stone-50 truncate">{user.name}</div>
+            <div className="text-xs text-stone-500 dark:text-stone-400 truncate">{user.email}</div>
             {user.barCouncilNo && (
-              <div className="mt-1 inline-flex items-center gap-1 text-[11px] text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded font-mono">
+              <div className="mt-1 inline-flex items-center gap-1 text-[11px] text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded font-mono">
                 {user.barCouncilNo}
               </div>
             )}
@@ -85,17 +87,17 @@ export function UserMenu({ user }: Props) {
             <Link
               href="/settings"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-stone-700 hover:bg-stone-50"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
             >
-              <Settings className="h-4 w-4 text-stone-500" />
+              <Settings className="h-4 w-4 text-stone-500 dark:text-stone-400" />
               Settings
             </Link>
             <button
               onClick={signOut}
               disabled={signingOut}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-stone-700 hover:bg-stone-50 disabled:opacity-50"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 disabled:opacity-50"
             >
-              <LogOut className="h-4 w-4 text-stone-500" />
+              <LogOut className="h-4 w-4 text-stone-500 dark:text-stone-400" />
               {signingOut ? "Signing out…" : "Sign out"}
             </button>
           </div>

@@ -86,19 +86,27 @@ export function NotificationBell() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative p-1.5 rounded-md text-stone-600 hover:bg-stone-100 hover:text-stone-900 transition"
+        className="relative p-1.5 rounded-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-white transition"
         aria-label={`Notifications${unread ? ` (${unread} unread)` : ""}`}
         aria-expanded={open}
       >
-        <Bell className="h-4 w-4" />
+        <Bell className={`h-4 w-4 ${hasCritical ? "animate-pulse" : ""}`} />
         {unread > 0 && (
-          <span
-            className={`absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full text-[10px] font-semibold text-white flex items-center justify-center tabular-nums shadow-sm ${
-              hasCritical ? "bg-red-600" : "bg-indigo-600"
-            }`}
-          >
-            {unread > 9 ? "9+" : unread}
-          </span>
+          <>
+            {hasCritical && (
+              <span
+                className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] rounded-full bg-red-500/60 animate-ping pointer-events-none"
+                aria-hidden
+              />
+            )}
+            <span
+              className={`absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full text-[10px] font-semibold text-white flex items-center justify-center tabular-nums shadow-sm ring-2 ring-background ${
+                hasCritical ? "bg-red-600" : "bg-indigo-600"
+              }`}
+            >
+              {unread > 9 ? "9+" : unread}
+            </span>
+          </>
         )}
       </button>
 

@@ -58,7 +58,7 @@ export function SyncButton({
     return (
       <div className="inline-flex items-center gap-1.5">
         <span
-          className={`inline-flex items-center rounded-md border font-medium ${base} border-emerald-200 bg-emerald-50 text-emerald-800`}
+          className={`inline-flex items-center rounded-md border font-medium ${base} border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/60 dark:text-emerald-200`}
         >
           <Check className="h-3 w-3" /> Synced
         </span>
@@ -67,7 +67,7 @@ export function SyncButton({
             href={eventLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-stone-500 hover:text-indigo-700 underline underline-offset-2"
+            className="text-xs text-stone-500 dark:text-stone-400 hover:text-indigo-700 dark:hover:text-indigo-300 underline underline-offset-2"
           >
             View
           </a>
@@ -79,7 +79,7 @@ export function SyncButton({
   if (state === "syncing") {
     return (
       <span
-        className={`inline-flex items-center rounded-md border font-medium ${base} border-indigo-200 bg-indigo-50 text-indigo-800`}
+        className={`inline-flex items-center rounded-md border font-medium ${base} border-indigo-200 bg-indigo-50 text-indigo-800 dark:border-indigo-900/60 dark:bg-indigo-950/60 dark:text-indigo-200`}
       >
         <Loader2 className="h-3 w-3 animate-spin" /> Syncing…
       </span>
@@ -90,7 +90,7 @@ export function SyncButton({
     return (
       <button
         onClick={doSync}
-        className={`inline-flex items-center rounded-md border font-medium ${base} border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition`}
+        className={`inline-flex items-center rounded-md border font-medium ${base} border-red-200 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-900/60 dark:bg-red-950/60 dark:text-red-200 dark:hover:bg-red-950 transition`}
         title="Retry sync"
       >
         <AlertCircle className="h-3 w-3" /> Retry
@@ -102,7 +102,7 @@ export function SyncButton({
   return (
     <button
       onClick={doSync}
-      className={`inline-flex items-center rounded-md border font-medium ${base} border-stone-300 bg-white text-stone-700 hover:border-indigo-300 hover:text-indigo-700 transition`}
+      className={`inline-flex items-center rounded-md border font-medium ${base} border-stone-300 bg-surface text-stone-700 hover:border-indigo-300 hover:text-indigo-700 dark:border-stone-700 dark:text-stone-200 dark:hover:border-indigo-500 dark:hover:text-indigo-300 transition`}
       title={connected ? "Sync to Google Calendar" : "Connect Google Calendar"}
     >
       <Calendar className="h-3 w-3" />

@@ -24,7 +24,7 @@ export function BrandMark({
   const s = sizes[size];
   const colors =
     tone === "dark"
-      ? { icon: "text-indigo-700", text: "text-stone-900" }
+      ? { icon: "text-indigo-700 dark:text-indigo-400", text: "text-stone-900 dark:text-stone-50" }
       : { icon: "text-indigo-300", text: "text-white" };
   return (
     <span className={cn("inline-flex items-center gap-2 font-semibold tracking-tight", className)}>

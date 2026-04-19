@@ -20,8 +20,9 @@ export async function middleware(req: NextRequest) {
   const isAuthPage = pathname === "/sign-in" || pathname === "/sign-up";
   const isAuthApi = pathname.startsWith("/api/auth");
   const isHealthCheck = pathname === "/api/health";
+  const isLanding = pathname === "/landing";
 
-  if (isPublicAsset || isAuthApi || isHealthCheck) {
+  if (isPublicAsset || isAuthApi || isHealthCheck || isLanding) {
     return NextResponse.next();
   }
 
@@ -58,6 +59,10 @@ export async function middleware(req: NextRequest) {
     process.env.LAWYER_ID && process.env.SKIP_AUTH_IN_DEV === "1";
 
   if (!authed && !fallbackActive) {
+    // Unauthenticated users hit the marketing landing, not a sign-in wall.
+    if (pathname === "/") {
+      return NextResponse.redirect(new URL("/landing", req.url));
+    }
     const url = new URL("/sign-in", req.url);
     // Preserve where the user was heading so we can send them back after sign-in.
     if (pathname !== "/") url.searchParams.set("next", pathname + req.nextUrl.search);

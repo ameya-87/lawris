@@ -102,8 +102,10 @@ export function CasesBrowser({ initialHits }: Props) {
     <div className="space-y-5">
       <header className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Cases</h1>
-          <p className="text-sm text-stone-600 mt-0.5">
+          <h1 className="text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+            Cases
+          </h1>
+          <p className="text-sm text-stone-600 dark:text-stone-400 mt-0.5">
             {showingSearch
               ? `${resultsCount} match${resultsCount === 1 ? "" : "es"} for "${debouncedQ}"`
               : `${resultsCount} ${resultsCount === 1 ? "matter" : "matters"}`}
@@ -111,39 +113,39 @@ export function CasesBrowser({ initialHits }: Props) {
         </div>
         <Link
           href="/cases/new"
-          className="inline-flex items-center gap-1.5 bg-indigo-700 text-white text-sm px-3.5 py-2 rounded-md hover:bg-indigo-800 transition"
+          className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400 text-white text-sm px-3.5 py-2 rounded-md transition shadow-soft"
         >
           <Plus className="h-4 w-4" /> New case
         </Link>
       </header>
 
-      <div className="bg-white border border-stone-200 rounded-lg shadow-sm">
+      <div className="bg-surface border border-stone-200 dark:border-stone-800 rounded-xl shadow-soft">
         <div className="flex items-center gap-2 px-4 py-3">
-          <Search className="h-4 w-4 text-stone-400 flex-shrink-0" />
+          <Search className="h-4 w-4 text-stone-400 dark:text-stone-500 flex-shrink-0" />
           <input
             ref={inputRef}
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search cases, parties, clauses, or keywords"
-            className="flex-1 text-sm outline-none bg-transparent placeholder:text-stone-400"
+            className="flex-1 text-sm outline-none bg-transparent text-stone-900 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500"
           />
-          {loading && <Loader2 className="h-3.5 w-3.5 animate-spin text-stone-400" />}
+          {loading && <Loader2 className="h-3.5 w-3.5 animate-spin text-stone-400 dark:text-stone-500" />}
           {q && (
             <button
               onClick={() => setQ("")}
-              className="p-1 text-stone-400 hover:text-stone-700 rounded"
+              className="p-1 text-stone-400 hover:text-stone-700 dark:text-stone-500 dark:hover:text-stone-200 rounded"
               aria-label="Clear search"
             >
               <X className="h-3.5 w-3.5" />
             </button>
           )}
-          <kbd className="hidden sm:inline-flex items-center text-[10px] font-mono text-stone-400 border border-stone-200 rounded px-1.5 py-0.5">
+          <kbd className="hidden sm:inline-flex items-center text-[10px] font-mono text-stone-400 dark:text-stone-500 border border-stone-200 dark:border-stone-700 rounded px-1.5 py-0.5">
             /
           </kbd>
         </div>
 
-        <div className="border-t border-stone-100 px-4 py-2.5 flex items-center gap-2 flex-wrap">
-          <span className="text-[11px] uppercase tracking-wide text-stone-400 mr-1">
+        <div className="border-t border-stone-100 dark:border-stone-800 px-4 py-2.5 flex items-center gap-2 flex-wrap">
+          <span className="text-[11px] uppercase tracking-wider text-stone-400 dark:text-stone-500 mr-1">
             Filters
           </span>
           <FilterSelect label="Type" value={caseType} onChange={setCaseType} options={[...CASE_TYPES]} />
@@ -152,7 +154,7 @@ export function CasesBrowser({ initialHits }: Props) {
           {(activeFilterCount > 0 || q) && (
             <button
               onClick={clearAll}
-              className="ml-auto text-xs text-stone-500 hover:text-red-700 transition"
+              className="ml-auto text-xs text-stone-500 dark:text-stone-400 hover:text-red-700 dark:hover:text-red-400 transition"
             >
               Clear all
             </button>
@@ -187,15 +189,23 @@ function FilterSelect({
   options: string[];
 }) {
   return (
-    <label className={`relative inline-flex items-center text-xs ${value ? "text-indigo-800" : "text-stone-700"}`}>
+    <label
+      className={`relative inline-flex items-center text-xs ${
+        value ? "text-indigo-800 dark:text-indigo-300" : "text-stone-700 dark:text-stone-300"
+      }`}
+    >
       <span
-        className={`border rounded-md px-2.5 py-1 inline-flex items-center gap-1 cursor-pointer hover:border-indigo-300 transition ${
-          value ? "bg-indigo-50 border-indigo-200" : "border-stone-200 bg-white"
+        className={`border rounded-md px-2.5 py-1 inline-flex items-center gap-1 cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-500 transition ${
+          value
+            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/60 dark:border-indigo-900"
+            : "border-stone-200 dark:border-stone-700 bg-surface"
         }`}
       >
-        <span className="uppercase tracking-wide text-[10px] text-stone-400">{label}</span>
+        <span className="uppercase tracking-wider text-[10px] text-stone-400 dark:text-stone-500">
+          {label}
+        </span>
         <span className="capitalize font-medium">{value || "Any"}</span>
-        <ChevronDown className="h-3 w-3 text-stone-400" />
+        <ChevronDown className="h-3 w-3 text-stone-400 dark:text-stone-500" />
       </span>
       <select
         value={value}
@@ -217,16 +227,16 @@ function ResultRow({ hit, query }: { hit: Hit; query: string }) {
   return (
     <Link
       href={`/cases/${hit.case_id}`}
-      className="block bg-white border border-stone-200 rounded-lg p-4 hover:border-indigo-300 hover:shadow-sm transition group"
+      className="block bg-surface border border-stone-200 dark:border-stone-800 rounded-xl p-4 hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-soft transition group"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-sm font-semibold text-stone-900 group-hover:text-indigo-700 transition">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-50 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition">
               <Highlight text={hit.title} needle={query} />
             </h3>
             {hit.case_number && (
-              <span className="text-[11px] font-mono text-stone-500">
+              <span className="text-[11px] font-mono text-stone-500 dark:text-stone-400">
                 <Highlight text={hit.case_number} needle={query} />
               </span>
             )}
@@ -236,33 +246,33 @@ function ResultRow({ hit, query }: { hit: Hit; query: string }) {
             <Pill>{hit.phase}</Pill>
             <StatusPill status={hit.status} />
             {hit.client_name && (
-              <span className="text-xs text-stone-600 inline-flex items-center gap-1">
-                <Scale className="h-3 w-3 text-stone-400" />
+              <span className="text-xs text-stone-600 dark:text-stone-400 inline-flex items-center gap-1">
+                <Scale className="h-3 w-3 text-stone-400 dark:text-stone-500" />
                 <Highlight text={hit.client_name} needle={query} />
               </span>
             )}
             {hit.court_name && (
-              <span className="text-xs text-stone-500">·</span>
+              <span className="text-xs text-stone-500 dark:text-stone-500">·</span>
             )}
             {hit.court_name && (
-              <span className="text-xs text-stone-500">
+              <span className="text-xs text-stone-500 dark:text-stone-400">
                 <Highlight text={hit.court_name} needle={query} />
               </span>
             )}
           </div>
           {hit.snippet && (
-            <p className="text-xs text-stone-600 mt-2 leading-relaxed line-clamp-2">
+            <p className="text-xs text-stone-600 dark:text-stone-400 mt-2 leading-relaxed line-clamp-2">
               <Highlight text={hit.snippet} needle={query} />
             </p>
           )}
           {hit.matched_fields.length > 0 && (
             <div className="mt-2 flex items-center gap-1.5 flex-wrap text-[10px]">
-              <FileText className="h-3 w-3 text-stone-300" />
-              <span className="text-stone-400 uppercase tracking-wide">Matched in</span>
+              <FileText className="h-3 w-3 text-stone-300 dark:text-stone-600" />
+              <span className="text-stone-400 dark:text-stone-500 uppercase tracking-wider">Matched in</span>
               {hit.matched_fields.map((f) => (
                 <span
                   key={f}
-                  className="px-1.5 py-0.5 rounded bg-stone-100 text-stone-600"
+                  className="px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
                 >
                   {FIELD_LABELS[f] ?? f}
                 </span>
@@ -291,7 +301,7 @@ const FIELD_LABELS: Record<string, string> = {
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-stone-100 text-stone-700 capitalize">
+    <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 capitalize">
       {children}
     </span>
   );
@@ -300,12 +310,12 @@ function Pill({ children }: { children: React.ReactNode }) {
 function StatusPill({ status }: { status: string }) {
   const tone =
     status === "active"
-      ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+      ? "bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-200 dark:border-emerald-900/60"
       : status === "disposed"
-        ? "bg-stone-100 text-stone-700 border-stone-200"
+        ? "bg-stone-100 text-stone-700 border-stone-200 dark:bg-stone-800 dark:text-stone-300 dark:border-stone-700"
         : status === "stayed"
-          ? "bg-amber-50 text-amber-800 border-amber-200"
-          : "bg-indigo-50 text-indigo-800 border-indigo-200";
+          ? "bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/60 dark:text-amber-200 dark:border-amber-900/60"
+          : "bg-indigo-50 text-indigo-800 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-200 dark:border-indigo-900/60";
   return (
     <span className={`text-[10px] px-1.5 py-0.5 rounded border capitalize ${tone}`}>
       {status}
@@ -327,7 +337,7 @@ function Highlight({ text, needle }: { text: string; needle: string }) {
     parts.push(
       <mark
         key={`${i}`}
-        className="bg-amber-100 text-amber-900 rounded px-0.5"
+        className="bg-amber-100 text-amber-900 dark:bg-amber-400/20 dark:text-amber-200 rounded px-0.5"
       >
         {text.slice(i, i + n)}
       </mark>,
@@ -341,26 +351,28 @@ function Highlight({ text, needle }: { text: string; needle: string }) {
 
 function EmptyState({ showingSearch, query }: { showingSearch: boolean; query: string }) {
   return (
-    <div className="bg-white border border-dashed border-stone-300 rounded-lg p-12 text-center">
-      <div className="mx-auto h-10 w-10 rounded-full bg-stone-50 border border-stone-200 flex items-center justify-center mb-3">
-        <Search className="h-4 w-4 text-stone-400" />
+    <div className="bg-surface border border-dashed border-stone-300 dark:border-stone-700 rounded-xl p-12 text-center">
+      <div className="mx-auto h-10 w-10 rounded-full bg-surface-muted border border-stone-200 dark:border-stone-700 flex items-center justify-center mb-3">
+        <Search className="h-4 w-4 text-stone-400 dark:text-stone-500" />
       </div>
       {showingSearch ? (
         <>
-          <div className="text-sm font-medium text-stone-800">No cases match &ldquo;{query}&rdquo;</div>
-          <p className="text-xs text-stone-500 mt-1">
+          <div className="text-sm font-medium text-stone-800 dark:text-stone-200">
+            No cases match &ldquo;{query}&rdquo;
+          </div>
+          <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
             Try a different spelling, a clause name, or remove filters.
           </p>
         </>
       ) : (
         <>
-          <div className="text-sm font-medium text-stone-800">No cases yet</div>
-          <p className="text-xs text-stone-500 mt-1">
+          <div className="text-sm font-medium text-stone-800 dark:text-stone-200">No cases yet</div>
+          <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
             Create a case to start tracking deadlines, hearings, and documents.
           </p>
           <Link
             href="/cases/new"
-            className="inline-flex items-center gap-1.5 mt-4 text-indigo-700 hover:underline text-sm"
+            className="inline-flex items-center gap-1.5 mt-4 text-indigo-700 dark:text-indigo-300 hover:underline text-sm"
           >
             <Plus className="h-4 w-4" /> Create your first case
           </Link>
