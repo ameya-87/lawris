@@ -5,6 +5,7 @@ import type { ResearchNote } from "@/lib/types";
 import type { CaseDocumentRef, CitationItem, ResearchResponse } from "@/lib/prompts/research";
 import { getSourceHost } from "@/lib/source-urls";
 import { Send, Loader2, BookOpen, Sparkles, ExternalLink } from "lucide-react";
+import { ClauseText } from "@/components/clause/clause-text";
 
 type Turn = { query: string; response: ResearchResponse | null; loading: boolean };
 
@@ -104,7 +105,11 @@ function Turn({ turn }: { turn: Turn }) {
       )}
       {turn.response && (
         <>
-          <p className="text-sm leading-relaxed text-stone-800">{turn.response.answer}</p>
+          <ClauseText
+            as="p"
+            className="text-sm leading-relaxed text-stone-800"
+            text={turn.response.answer}
+          />
           {turn.response.citations.length > 0 && (
             <div className="space-y-1.5">
               <div className="text-xs uppercase tracking-wide text-stone-500 flex items-center gap-1.5">
@@ -232,9 +237,11 @@ function CitationField({ label, value }: { label: string; value?: string }) {
       <div className="text-[10px] uppercase tracking-wide text-stone-500 font-medium">
         {label}
       </div>
-      <div className="text-xs text-stone-800 leading-relaxed mt-0.5">
-        {value ?? "Not specified in retrieved context"}
-      </div>
+      <ClauseText
+        as="div"
+        className="text-xs text-stone-800 leading-relaxed mt-0.5"
+        text={value ?? "Not specified in retrieved context"}
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { HearingPanel } from "./hearing-panel";
 import { ResearchPanel } from "./research-panel";
 import { DocumentList } from "./document-list";
 import { DocumentUpload } from "@/components/document-upload";
+import { ClauseText } from "@/components/clause/clause-text";
 
 type Props = {
   case: Case & { clients: Client | null };
@@ -43,7 +44,7 @@ export function CaseDetail({ case: c, deadlines, documents, hearings, research }
         {c.ai_summary ? (
           <div className="bg-indigo-50 border border-indigo-100 rounded p-3 text-sm leading-relaxed text-indigo-950">
             <div className="text-xs uppercase tracking-wide text-indigo-700 font-medium mb-1">AI summary</div>
-            {c.ai_summary}
+            <ClauseText as="div" text={c.ai_summary} />
           </div>
         ) : (
           <div className="text-xs text-stone-400 italic">
