@@ -10,6 +10,7 @@ import { ResearchPanel } from "./research-panel";
 import { DocumentList } from "./document-list";
 import { DocumentUpload } from "@/components/document-upload";
 import { ClauseText } from "@/components/clause/clause-text";
+import { ExportReportButton } from "@/components/export-report-button";
 
 type Props = {
   case: Case & { clients: Client | null };
@@ -28,11 +29,16 @@ export function CaseDetail({ case: c, deadlines, documents, hearings, research }
   return (
     <div className="space-y-6">
       <header className="bg-surface border border-stone-200 dark:border-stone-800 rounded-xl p-6 space-y-3 shadow-soft">
-        <div className="flex items-center gap-2 text-xs">
-          <Pill>{c.case_type}</Pill>
-          <Pill>{c.phase}</Pill>
-          <Pill>{c.status}</Pill>
-          {c.case_number && <span className="text-stone-500 dark:text-stone-400 font-mono">{c.case_number}</span>}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs flex-wrap">
+            <Pill>{c.case_type}</Pill>
+            <Pill>{c.phase}</Pill>
+            <Pill>{c.status}</Pill>
+            {c.case_number && (
+              <span className="text-stone-500 dark:text-stone-400 font-mono">{c.case_number}</span>
+            )}
+          </div>
+          <ExportReportButton caseId={c.id} />
         </div>
         <h1 className="text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
           {c.title}
