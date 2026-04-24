@@ -401,7 +401,11 @@ export async function generateCaseReportDocx(data: ReportData): Promise<Buffer> 
           spacing: { before: 40, after: 40 },
           children: [
             new TextRun({
+<<<<<<< HEAD
               text: `${d.title}  —  Due: ${fmtDate(d.due_date)}  [${(d.urgency ?? "").toUpperCase() || "—"}]`,
+=======
+              text: `${d.title}  —  Due: ${fmtDate(d.due_date)}  [${d.urgency.toUpperCase()}]`,
+>>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
               font: "Calibri",
               size: 21,
               color: INK,
@@ -798,7 +802,11 @@ function deadlineTable(
         cellOf(d.title, colWidths[0]),
         cellOf(typeLabel, colWidths[1]),
         cellOf(fmtDate(d.due_date), colWidths[2]),
+<<<<<<< HEAD
         cellOf(((d.urgency ?? "").toUpperCase() || "—"), colWidths[3]),
+=======
+        cellOf(d.urgency.toUpperCase(), colWidths[3]),
+>>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
         cellOf(d.is_completed ? "\u2713 Done" : "Pending", colWidths[4]),
       ],
     });
@@ -862,8 +870,12 @@ function hearingTable(hearings: ReportData["hearings"]): Table {
 }
 
 function researchBox(note: ReportData["researchNotes"][number]): Table {
+<<<<<<< HEAD
   const raw = note.content ?? "";
   const content = raw.length > 500 ? raw.slice(0, 500) + "\u2026" : raw;
+=======
+  const content = note.content.length > 500 ? note.content.slice(0, 500) + "\u2026" : note.content;
+>>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
   const sourceLabel = note.source ?? "AI Research";
   return new Table({
     width: { size: CW, type: WidthType.DXA },
