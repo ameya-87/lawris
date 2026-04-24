@@ -2,12 +2,9 @@
   "name": "vit_hackathon",
   "version": "0.1.0",
   "private": true,
-<<<<<<< HEAD
   "engines": {
     "node": "20.20.2"
   },
-=======
->>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -15,7 +12,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@google/genai": "1.50.1",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "2.103.3",
@@ -23,20 +19,10 @@
     "@tiptap/pm": "3.22.3",
     "@tiptap/react": "3.22.3",
     "@tiptap/starter-kit": "3.22.3",
-=======
-    "@google/genai": "^1.50.1",
-    "@supabase/ssr": "^0.10.2",
-    "@supabase/supabase-js": "^2.103.3",
-    "@tanstack/react-query": "^5.99.0",
-    "@tiptap/pm": "^3.22.3",
-    "@tiptap/react": "^3.22.3",
-    "@tiptap/starter-kit": "^3.22.3",
->>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
     "@types/multer": "^2.1.0",
     "@types/pdf-parse": "^1.1.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-<<<<<<< HEAD
     "date-fns": "4.1.0",
     "docx": "^9.6.1",
     "lucide-react": "1.8.0",
@@ -48,19 +34,6 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "zod": "4.3.6"
-=======
-    "date-fns": "^4.1.0",
-    "docx": "^9.6.1",
-    "lucide-react": "^1.8.0",
-    "multer": "^2.1.1",
-    "next": "14.2.35",
-    "pdf-parse": "^2.4.5",
-    "react": "^18",
-    "react-dom": "^18",
-    "sonner": "^2.0.7",
-    "tailwind-merge": "^3.5.0",
-    "zod": "^4.3.6"
->>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -70,11 +43,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
     "postcss": "^8",
-<<<<<<< HEAD
     "tailwindcss": "3.4.1",
-=======
-    "tailwindcss": "^3.4.1",
->>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
     "tsx": "^4.21.0",
     "typescript": "^5"
   }

@@ -203,7 +203,18 @@ function bodyPara(
   });
 }
 
-function centerPara(text: string, opts: { size?: number; color?: string; bold?: boolean; italic?: boolean; font?: string; spacingBefore?: number; spacingAfter?: number } = {}): Paragraph {
+function centerPara(
+  text: string,
+  opts: {
+    size?: number;
+    color?: string;
+    bold?: boolean;
+    italic?: boolean;
+    font?: string;
+    spacingBefore?: number;
+    spacingAfter?: number;
+  } = {},
+): Paragraph {
   return new Paragraph({
     alignment: AlignmentType.CENTER,
     spacing: { before: opts.spacingBefore ?? 0, after: opts.spacingAfter ?? 0 },
@@ -347,9 +358,7 @@ export async function generateCaseReportDocx(data: ReportData): Promise<Buffer> 
   children.push(goldRule());
   children.push(coverInfoTable(data));
   children.push(emptyPara(240));
-  children.push(
-    centerPara(`Report Generated: ${formattedDate}`, { size: 18, color: GRAY }),
-  );
+  children.push(centerPara(`Report Generated: ${formattedDate}`, { size: 18, color: GRAY }));
   const enrolBit = lawyer.bar_council_no ? `  ·  Enr. No. ${lawyer.bar_council_no}` : "";
   children.push(
     centerPara(`Prepared by: Adv. ${lawyer.full_name}${enrolBit}`, { size: 18, color: GRAY }),
@@ -401,11 +410,7 @@ export async function generateCaseReportDocx(data: ReportData): Promise<Buffer> 
           spacing: { before: 40, after: 40 },
           children: [
             new TextRun({
-<<<<<<< HEAD
               text: `${d.title}  —  Due: ${fmtDate(d.due_date)}  [${(d.urgency ?? "").toUpperCase() || "—"}]`,
-=======
-              text: `${d.title}  —  Due: ${fmtDate(d.due_date)}  [${d.urgency.toUpperCase()}]`,
->>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
               font: "Calibri",
               size: 21,
               color: INK,
@@ -750,9 +755,7 @@ function snapshotTable(caseData: ReportData["caseData"], client: ReportData["cli
   });
 }
 
-function deadlineTable(
-  deadlines: ReportData["deadlines"],
-): Table {
+function deadlineTable(deadlines: ReportData["deadlines"]): Table {
   const colWidths = [3000, 1400, 1400, 1000, 866];
   const sorted = [...deadlines].sort((a, b) => {
     if (a.is_completed !== b.is_completed) return a.is_completed ? 1 : -1;
@@ -802,11 +805,7 @@ function deadlineTable(
         cellOf(d.title, colWidths[0]),
         cellOf(typeLabel, colWidths[1]),
         cellOf(fmtDate(d.due_date), colWidths[2]),
-<<<<<<< HEAD
         cellOf(((d.urgency ?? "").toUpperCase() || "—"), colWidths[3]),
-=======
-        cellOf(d.urgency.toUpperCase(), colWidths[3]),
->>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
         cellOf(d.is_completed ? "\u2713 Done" : "Pending", colWidths[4]),
       ],
     });
@@ -870,12 +869,8 @@ function hearingTable(hearings: ReportData["hearings"]): Table {
 }
 
 function researchBox(note: ReportData["researchNotes"][number]): Table {
-<<<<<<< HEAD
   const raw = note.content ?? "";
   const content = raw.length > 500 ? raw.slice(0, 500) + "\u2026" : raw;
-=======
-  const content = note.content.length > 500 ? note.content.slice(0, 500) + "\u2026" : note.content;
->>>>>>> 8d990389f3852ff56aabcfdd9ccd2f6781e8fefa
   const sourceLabel = note.source ?? "AI Research";
   return new Table({
     width: { size: CW, type: WidthType.DXA },
