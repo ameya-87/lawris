@@ -1,119 +1,88 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { getLawyerId } from "@/lib/auth/session";
-import { getConnectionStatus } from "@/lib/google/oauth";
-import { CalendarView, type CalendarDeadline } from "@/components/calendar/calendar-view";
+import { classifyUrgency, urgencyClass, daysUntil } from "@/lib/deadlines";
 import type { Deadline } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-type Row = Deadline & {
-  cases: { id: string; title: string; case_number: string | null };
-};
-type SyncStatus = "idle" | "syncing" | "synced" | "failed";
-
-async function loadAll(lawyerId: string): Promise<CalendarDeadline[]> {
-  try {
-    const sb = supabaseServer();
-    const { data: caseIds } = await sb
-      .from("cases")
-      .select("id")
-      .eq("lawyer_id", lawyerId);
-    const ids = (caseIds ?? []).map((r) => r.id);
-    if (!ids.length) return [];
-    const today = new Date().toISOString().slice(0, 10);
-    const { data } = await sb
-      .from("deadlines")
-      .select("*, cases(id, title, case_number)")
-      .in("case_id", ids)
-      .eq("is_completed", false)
-      .gte("due_date", today)
-      .order("due_date");
-    const rows = (data ?? []) as Row[];
-    return rows.map((d) => ({
-      id: d.id,
-      title: d.title,
-      due_date: d.due_date,
-      deadline_type: d.deadline_type,
-      notes: d.notes,
-      case_id: d.cases.id,
-      case_title: d.cases.title,
-      case_number: d.cases.case_number,
-    }));
-  } catch (e) {
-    console.error("[calendar/page] loadAll failed", e);
-    return [];
-  }
-}
-
-async function loadSyncMap(
-  lawyerId: string,
-  deadlineIds: string[],
-): Promise<Record<string, { status: SyncStatus; event_link: string | null }>> {
-  if (!deadlineIds.length) return {};
-  try {
-    const sb = supabaseServer();
-    const { data, error } = await sb
-      .from("calendar_sync")
-      .select("deadline_id, status, google_event_id")
-      .eq("user_id", lawyerId)
-      .in("deadline_id", deadlineIds);
-    if (error) {
-      // Table missing or RLS blocking — don't crash SSR, just treat everything as unsynced.
-      console.warn("[calendar/page] calendar_sync query warning:", error.message);
-      return {};
-    }
-    const map: Record<string, { status: SyncStatus; event_link: string | null }> = {};
-    for (const r of data ?? []) {
-      const raw = r.status as string;
-      const status: SyncStatus =
-        raw === "synced" ? "synced" : raw === "failed" ? "failed" : raw === "syncing" ? "syncing" : "idle";
-      map[r.deadline_id as string] = {
-        status,
-        event_link: r.google_event_id
-          ? `https://calendar.google.com/calendar/u/0/r/eventedit/${encodeURIComponent(String(r.google_event_id))}`
-          : null,
-      };
-    }
-    return map;
-  } catch (e) {
-    console.error("[calendar/page] loadSyncMap failed", e);
-    return {};
-  }
-}
-
-async function safeConnectionStatus(lawyerId: string): Promise<boolean> {
-  try {
-    const s = await getConnectionStatus(lawyerId);
-    return s.connected;
-  } catch (e) {
-    console.warn("[calendar/page] getConnectionStatus failed, assuming disconnected", e);
-    return false;
-  }
-}
-
 export default async function CalendarPage() {
-  let lawyerId: string;
-  try {
-    lawyerId = await getLawyerId();
-  } catch (e) {
-    console.error("[calendar/page] getLawyerId failed", e);
-    // Middleware should normally prevent this, but render an empty shell instead of crashing.
-    return (
-      <CalendarView items={[]} initialConnected={false} initialSyncMap={{}} />
-    );
-  }
+  const sb = supabaseServer();
+  const lawyerId = await getLawyerId();
+  const today = new Date().toISOString().slice(0, 10);
 
-  const [items, connected] = await Promise.all([
-    loadAll(lawyerId),
-    safeConnectionStatus(lawyerId),
-  ]);
-  const syncMap = await loadSyncMap(lawyerId, items.map((d) => d.id));
+  const { data: cases } = await sb
+    .from("cases")
+    .select("id")
+    .eq("lawyer_id", lawyerId);
+
+  const caseIds = (cases ?? []).map((c) => c.id);
+
+  const deadlines = caseIds.length
+    ? await sb
+        .from("deadlines")
+        .select("*, cases(title)")
+        .in("case_id", caseIds)
+        .order("due_date")
+    : { data: [] };
+
+  const allDeadlines = (deadlines.data ?? []) as (Deadline & { cases: { title: string } })[];
+  const upcoming = allDeadlines.filter(d => d.due_date >= today && !d.is_completed);
+  const pastOrCompleted = allDeadlines.filter(d => d.due_date < today || d.is_completed);
 
   return (
-    <CalendarView
-      items={items}
-      initialConnected={connected}
-      initialSyncMap={syncMap}
-    />
+    <div className="space-y-8">
+      <header>
+        <h1 className="text-2xl font-semibold tracking-tight">Calendar</h1>
+        <p className="text-sm text-stone-600">
+          Your upcoming deadlines and hearings
+        </p>
+      </header>
+
+      <section>
+        <h2 className="text-sm font-medium text-stone-700 uppercase tracking-wide mb-3">Upcoming</h2>
+        {upcoming.length === 0 ? (
+          <div className="bg-white border border-dashed border-stone-300 rounded-lg p-8 text-center text-sm text-stone-500">
+            No upcoming deadlines.
+          </div>
+        ) : (
+          <ul className="bg-white border border-stone-200 rounded-lg overflow-hidden divide-y divide-stone-100">
+            {upcoming.map((d) => {
+              const u = classifyUrgency(new Date(d.due_date));
+              const days = daysUntil(d.due_date);
+              return (
+                <li key={d.id} className="p-4 flex items-start gap-4">
+                  <div className={`px-2.5 py-1 rounded text-xs font-medium border ${urgencyClass(u)}`}>
+                    {days <= 0 ? "Today" : `${days}d`}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm">{d.title}</div>
+                    <div className="text-xs text-stone-500 mt-0.5">{d.cases.title}</div>
+                    {d.notes && <div className="text-xs text-stone-600 mt-1.5 leading-relaxed">{d.notes}</div>}
+                  </div>
+                  <div className="text-xs text-stone-500 whitespace-nowrap">{d.due_date}</div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      {pastOrCompleted.length > 0 && (
+        <section>
+          <h2 className="text-sm font-medium text-stone-700 uppercase tracking-wide mb-3">Past & Completed</h2>
+          <ul className="bg-stone-50 border border-stone-200 rounded-lg overflow-hidden divide-y divide-stone-100 opacity-75">
+            {pastOrCompleted.map((d) => (
+              <li key={d.id} className="p-4 flex items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm line-through text-stone-500">{d.title}</div>
+                  <div className="text-xs text-stone-400 mt-0.5">{d.cases.title}</div>
+                </div>
+                <div className="text-xs text-stone-400 whitespace-nowrap">{d.due_date}</div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
   );
 }

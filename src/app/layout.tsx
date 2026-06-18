@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { Providers } from "@/app/providers";
-import { THEME_SCRIPT } from "@/components/theme/theme-script";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -17,30 +16,20 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Lawris — AI Legal Workflow Assistant",
-  description:
-    "Modern case management, AI-assisted drafting, and case-grounded legal research for Indian advocates.",
+  title: "Lawris — Legal Workflow Agent",
+  description: "AI-assisted case management, drafting, and research for Indian advocates.",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Sets html.dark before paint to prevent theme flash. */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
-      </head>
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 text-stone-900 min-h-screen`}
       >
         <Providers>{children}</Providers>
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-          theme="system"
-        />
+        <Toaster position="top-right" richColors closeButton />
       </body>
     </html>
   );

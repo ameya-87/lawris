@@ -17,8 +17,4 @@ export const env = {
   supabaseServiceKey: () => required("SUPABASE_SERVICE_ROLE_KEY"),
   supabaseAnonKey: () => required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
   lawyerId: () => required("LAWYER_ID"),
-  // Google Calendar integration is OPTIONAL — app boots without these.
-  googleClientId: () => process.env.GOOGLE_CLIENT_ID,
-  googleClientSecret: () => process.env.GOOGLE_CLIENT_SECRET,
-  googleRedirectUri: () => process.env.GOOGLE_OAUTH_REDIRECT_URI,
 };
